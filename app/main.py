@@ -1,7 +1,7 @@
 # app/main.py
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
-from app import models, database
+import models, database
 
 app = FastAPI(title="Тестовое задание: API-сервис для вопросов и ответов")
 
