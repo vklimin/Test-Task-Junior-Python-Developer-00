@@ -18,8 +18,7 @@ services:
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
     volumes:
-      - ./src:/opt/app/src
-      - ./alembic:/opt/app/alembic
+      - ./:/opt/app/
     ports:
       - "8000:8000"
     restart: unless-stopped
