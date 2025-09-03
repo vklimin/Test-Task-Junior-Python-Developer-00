@@ -17,3 +17,14 @@ def get_db():
 def read_root():
     return {"message": "Hello, world!"}
 
+
+@app.post("/questions/", response_model=schemas.QuestionResponse)
+def create_question(question: schemas.QuestionCreate, db: Session = Depends(get_db)):
+    """
+    Создание нового вопроса
+    """
+    db_question = models.Question(text=question.text)
+    db.add(db_question)
+    db.commit()
+    db.refresh(db_question)
+    return db_question
