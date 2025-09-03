@@ -2,7 +2,7 @@
 """
 Pydantic-схемы для FastAPI
 """
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, Field, field_validator, ConfigDict
 from datetime import datetime
 
 
@@ -10,7 +10,17 @@ class QuestionCreate(BaseModel):
     """
     В HTTP-запросе ожидаем текст вопроса
     """
-    text: str
+    text: str = Field(
+        ...,
+        description="Текст вопроса (обязательный, не может быть пустым или состоять только из пробелов)"
+    )
+
+    @field_validator("text")
+    @classmethod
+    def validate_text(cls, v: str) -> str:
+        if not v or (v := v.strip()) == "":
+            raise ValueError("Текст вопроса не может быть пустым или состоять только из пробелов")
+        return v
 
 
 class QuestionResponse(BaseModel):
