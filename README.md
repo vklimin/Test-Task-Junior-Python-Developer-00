@@ -1,2 +1,31 @@
 # Test-Task-Junior-Python-Developer-00
 Тестовое задание работодателя "Хайталент" на соискание должности "Junior Python разработчик"
+
+## Подготовка к первому запуску
+* Скопируйте файл с примером переменных окружения:
+```bash
+cp .env.example .env
+```
+* При необходимости внесите изменения в конфиденциальные данные:
+```bash
+nano .env
+```
+## Запуск
+* Выполните команду:
+```bash
+docker-compose up -d
+```
+## Остановка
+* Выполните команду:
+```bash
+docker-compose down
+```
+## Запуск тестов
+* Выполните команду:
+```bash
+docker-compose run --rm -e PYTHONPATH=/opt/app app pytest tests/ -v
+```
+* Чтобы проверить покрытие кода тестами, выполните команду:
+```bash
+docker-compose run --rm -e PYTHONPATH=/opt/app app pytest tests/ --cov=src
+```
