@@ -4,3 +4,10 @@ sqlalchemy
 alembic
 psycopg2-binary
 pydantic
+
+# Тестирование
+pytest
+pytest-cov
+fastapi-testclient
+httpx
+
