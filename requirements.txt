@@ -8,4 +8,4 @@ pydantic
 # Тестирование
 pytest
 pytest-cov
-
+httpx
