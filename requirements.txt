@@ -8,6 +8,4 @@ pydantic
 # Тестирование
 pytest
 pytest-cov
-fastapi-testclient
-httpx
 
