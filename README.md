@@ -19,14 +19,10 @@ docker-compose up -d
 ```
 ## Использование
 * API доступно по адресу:
-```URL
-http://localhost:8000
-```
+`http://localhost:8000`
 ## Swagger-документация
-* API доступно по адресу:
-```URL
-http://localhost:8000/docs
-```
+* Документация доступна по адресу:
+`http://localhost:8000/docs`
 ## Остановка
 * Выполните команду:
 ```bash
