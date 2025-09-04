@@ -2,6 +2,7 @@
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from src import models, database, schemas
+from typing import Annotated
 
 app = FastAPI(title="Тестовое задание: API-сервис для вопросов и ответов")
 
@@ -21,7 +22,7 @@ def read_root() -> dict:
 @app.post("/questions/", response_model=schemas.QuestionResponse)
 def create_question(
     question: schemas.QuestionCreate, 
-    db: Session = Depends(get_db)
+    db: Annotated[Session, Depends(get_db)]
 ) -> schemas.QuestionResponse:
     """
     Создание нового вопроса
