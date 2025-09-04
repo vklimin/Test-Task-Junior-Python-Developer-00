@@ -38,3 +38,9 @@ docker-compose run --rm -e PYTHONPATH=/opt/app app pytest tests/ -v
 ```bash
 docker-compose run --rm -e PYTHONPATH=/opt/app app pytest tests/ --cov=src
 ```
+## Проверка стиля кода
+* Выполните команды:
+```bash
+ruff check src/ --select I
+ruff check src/ --select ANN,B,C,E,F,I,W
+```
