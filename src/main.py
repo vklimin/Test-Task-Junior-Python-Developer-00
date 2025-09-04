@@ -46,7 +46,7 @@ def get_questions(
     """
     Получение списка всех вопросов
     """
-    logger.info("Запрос списка всх вопросов")
+    logger.info("Запрос списка всех вопросов")
     return db.query(Question).all()
 
 @app.post("/questions/", response_model=QuestionResponse)
