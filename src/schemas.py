@@ -32,9 +32,59 @@ class QuestionCreate(BaseModel):
 
 class QuestionResponse(BaseModel):
     """
-    В HTTP-ответе возвращаем поля созданной записи
+    В HTTP-ответе возвращаем поля записи о вопросе
     """
     id: int
+    text: str
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class AnswerCreate(BaseModel):
+    user_id: str = Field(
+        ...,
+        description=(
+            "Идентификатор пользователя (обязательный, "
+            "не может быть пустым или состоять только из пробелов)"
+        )
+    )
+    text: str = Field(
+        ...,
+        description=(
+            "Текст ответа (обязательный, "
+            "не может быть пустым или состоять только из пробелов)"
+        )
+    )
+
+
+    @field_validator("user_id")
+    @classmethod
+    def validate_user_id(cls: type[Self], v: str) -> str:
+        if not v or (v := v.strip()) == "":
+            raise ValueError(
+                "Идентификатор пользователя не может быть "
+                "пустым или состоять только из пробелов"
+            )
+        return v
+
+    @field_validator("text")
+    @classmethod
+    def validate_text(cls: type[Self], v: str) -> str:
+        if not v or (v := v.strip()) == "":
+            raise ValueError(
+                "Текст ответа не может быть пустым или состоять только из пробелов"
+            )
+        return v
+
+
+class AnswerResponse(BaseModel):
+    """
+    В HTTP-ответе возвращаем поля записи об ответе
+    """
+    id: int
+    question_id: int
+    user_id: str
     text: str
     created_at: datetime
 
