@@ -1,14 +1,18 @@
 # src/main.py
-from fastapi import FastAPI, Depends
-from sqlalchemy.orm import Session
-from src import models, database, schemas
 from typing import Annotated
+
+from fastapi import Depends, FastAPI
+from sqlalchemy.orm import Session
+
+from src.database import SessionLocal
+from src.models import Question
+from src.schemas import QuestionCreate, QuestionResponse
 
 app = FastAPI(title="Тестовое задание: API-сервис для вопросов и ответов")
 
 # Зависимость для сессии БД
 def get_db() -> Session:
-    db = database.SessionLocal()
+    db = SessionLocal()
     try:
         yield db
     finally:
@@ -19,15 +23,15 @@ def read_root() -> dict:
     return {"message": "Hello, world!"}
 
 
-@app.post("/questions/", response_model=schemas.QuestionResponse)
+@app.post("/questions/", response_model=QuestionResponse)
 def create_question(
-    question: schemas.QuestionCreate, 
+    question: QuestionCreate,
     db: Annotated[Session, Depends(get_db)]
-) -> schemas.QuestionResponse:
+) -> QuestionResponse:
     """
     Создание нового вопроса
     """
-    db_question = models.Question(text=question.text)
+    db_question = Question(text=question.text)
     db.add(db_question)
     db.commit()
     db.refresh(db_question)

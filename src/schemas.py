@@ -2,8 +2,10 @@
 """
 Pydantic-схемы для FastAPI
 """
-from pydantic import BaseModel, Field, field_validator, ConfigDict
 from datetime import datetime
+from typing import Self
+
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class QuestionCreate(BaseModel):
@@ -12,14 +14,19 @@ class QuestionCreate(BaseModel):
     """
     text: str = Field(
         ...,
-        description="Текст вопроса (обязательный, не может быть пустым или состоять только из пробелов)"
+        description=(
+            "Текст вопроса (обязательный, "
+            "не может быть пустым или состоять только из пробелов)"
+        )
     )
 
     @field_validator("text")
     @classmethod
-    def validate_text(cls, v: str) -> str:
+    def validate_text(cls: type[Self], v: str) -> str:
         if not v or (v := v.strip()) == "":
-            raise ValueError("Текст вопроса не может быть пустым или состоять только из пробелов")
+            raise ValueError(
+                "Текст вопроса не может быть пустым или состоять только из пробелов"
+            )
         return v
 
 
