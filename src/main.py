@@ -6,7 +6,7 @@ from src import models, database, schemas
 app = FastAPI(title="Тестовое задание: API-сервис для вопросов и ответов")
 
 # Зависимость для сессии БД
-def get_db():
+def get_db() -> Session:
     db = database.SessionLocal()
     try:
         yield db
@@ -14,12 +14,15 @@ def get_db():
         db.close()
 
 @app.get("/")
-def read_root():
+def read_root() -> dict:
     return {"message": "Hello, world!"}
 
 
 @app.post("/questions/", response_model=schemas.QuestionResponse)
-def create_question(question: schemas.QuestionCreate, db: Session = Depends(get_db)):
+def create_question(
+    question: schemas.QuestionCreate, 
+    db: Session = Depends(get_db)
+) -> schemas.QuestionResponse:
     """
     Создание нового вопроса
     """
