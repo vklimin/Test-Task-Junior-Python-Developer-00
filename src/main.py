@@ -87,7 +87,13 @@ def get_question_with_answers(
     db_question = db.query(Question).filter(Question.id == id).first()
     if not db_question:
         logger.info(f"Вопрос с ID = {id} не найден")
-        raise HTTPException(status_code=404, detail="Question not found")
+        # TO-DO: Тут можно заморочиться и возвращать
+        # 404 Not found, если вопрос под таким номером ещё не был создан, и
+        # 410 Gone, если вопрос ранее был удалён
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Question not found"
+        )
 
     return db_question
 
@@ -139,7 +145,10 @@ def create_answer(
     db_question = db.query(Question).filter(Question.id == id).first()
     if not db_question:
         logger.info(f"Не существует вопроса с ID = {id}")
-        raise HTTPException(status_code=404, detail="Question not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Question not found"
+        )
 
     db_answer = Answer(
         question_id=id,
@@ -169,7 +178,10 @@ def get_answer(
     db_answer = db.query(Answer).filter(Answer.id == id).first()
     if not db_answer:
         logger.info(f"Не существует ответа с ID = {id}")
-        raise HTTPException(status_code=404, detail="Answer not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Answer not found"
+        )
 
     return db_answer
 
