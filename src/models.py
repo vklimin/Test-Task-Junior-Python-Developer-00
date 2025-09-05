@@ -22,7 +22,7 @@ class Question(Base):
     answers = relationship(
         "Answer",
         back_populates="question",
-        cascade="all, delete-orphan",
+        cascade="all, delete-orphan", # Удалять ответы без вопросов
         lazy="select"
     )
 
@@ -33,6 +33,8 @@ class Answer(Base):
     id = Column(Integer, primary_key=True, index=True)
     question_id = Column(
         Integer,
+        # Внешний ключ для автоматического удаления ответа
+        # в случае удаления связанного вопроса
         ForeignKey("questions.id", ondelete="CASCADE"),
         nullable=False
     )

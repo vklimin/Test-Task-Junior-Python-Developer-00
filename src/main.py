@@ -2,7 +2,7 @@
 import logging
 from typing import Annotated
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, status
 from sqlalchemy.orm import Session
 
 from src.database import SessionLocal
@@ -122,3 +122,56 @@ def get_answer(
         raise HTTPException(status_code=404, detail="Answer not found")
 
     return db_answer
+
+
+@app.delete("/answers/{id}/", status_code=status.HTTP_204_NO_CONTENT)
+def delete_answer(
+    id: int,
+    db: Annotated[Session, Depends(get_db)]
+) -> None:
+    """
+    Удаление ответа по ID
+    """
+    logger.info(f"Запрос на удаление ответа с ID = {id}")
+
+    db_answer = db.query(Answer).filter(Answer.id == id).first()
+    if not db_answer:
+        logger.info(f"Ответ с ID = {id} не найден при попытке удаления")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Answer not found"
+        )
+
+    db.delete(db_answer)
+    db.commit()
+
+    logger.info(f"Ответ с ID = {id} успешно удалён")
+    return None
+
+
+@app.delete("/questions/{id}/", status_code=status.HTTP_204_NO_CONTENT)
+def delete_question(
+    id: int,
+    db: Annotated[Session, Depends(get_db)]
+) -> None:
+    """
+    Удаление вопроса по ID вместе с ответами
+    """
+    logger.info(f"Запрос на удаление вопроса с ID = {id}")
+
+    db_question = db.query(Question).filter(Question.id == id).first()
+    if not db_question:
+        logger.info(f"Вопрос с ID = {id} не найден при попытке удаления")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Question not found"
+        )
+
+    # Удаление связанных с вопросом ответов должно гарантироваться
+    # установленными реляционными отношениями между таблицами
+    # TO-DO: продумать тесты и убедиться, что это точно работает
+    db.delete(db_question)
+    db.commit()
+
+    logger.info(f"Вопрос с ID = {id} и все связанные ответы успешно удалены")
+    return None
