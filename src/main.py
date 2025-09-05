@@ -38,6 +38,8 @@ def read_root() -> dict:
     return {"message": "Hello, world!"}
 
 
+# === QUESTIONS ===
+
 @app.get("/questions/", response_model=list[QuestionResponse])
 def get_questions(
     db: Annotated[Session, Depends(get_db)]
@@ -71,6 +73,54 @@ def create_question(
     logger.info(f"Создан вопрос с ID = {db_question.id}")
     return db_question
 
+
+@app.get("/questions/{id}/", response_model=QuestionWithAnswersResponse)
+def get_question_with_answers(
+    id: int,
+    db: Annotated[Session, Depends(get_db)]
+) -> QuestionWithAnswersResponse:
+    """
+    Получение вопроса по ID и всех связанных с ним ответов
+    """
+    logger.info(f"Запрос вопроса с ID = {id} и всех ответов")
+
+    db_question = db.query(Question).filter(Question.id == id).first()
+    if not db_question:
+        logger.info(f"Вопрос с ID = {id} не найден")
+        raise HTTPException(status_code=404, detail="Question not found")
+
+    return db_question
+
+
+@app.delete("/questions/{id}/", status_code=status.HTTP_204_NO_CONTENT)
+def delete_question(
+    id: int,
+    db: Annotated[Session, Depends(get_db)]
+) -> None:
+    """
+    Удаление вопроса по ID вместе с ответами
+    """
+    logger.info(f"Запрос на удаление вопроса с ID = {id}")
+
+    db_question = db.query(Question).filter(Question.id == id).first()
+    if not db_question:
+        logger.info(f"Вопрос с ID = {id} не найден при попытке удаления")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Question not found"
+        )
+
+    # Удаление связанных с вопросом ответов должно гарантироваться
+    # установленными реляционными отношениями между таблицами
+    # TO-DO: продумать тесты и убедиться, что это точно работает
+    db.delete(db_question)
+    db.commit()
+
+    logger.info(f"Вопрос с ID = {id} и все связанные ответы успешно удалены")
+    return None
+
+
+# === ANSWERS ==
 
 @app.post("/questions/{id}/answers/", response_model=AnswerResponse)
 def create_answer(
@@ -147,49 +197,3 @@ def delete_answer(
 
     logger.info(f"Ответ с ID = {id} успешно удалён")
     return None
-
-
-@app.delete("/questions/{id}/", status_code=status.HTTP_204_NO_CONTENT)
-def delete_question(
-    id: int,
-    db: Annotated[Session, Depends(get_db)]
-) -> None:
-    """
-    Удаление вопроса по ID вместе с ответами
-    """
-    logger.info(f"Запрос на удаление вопроса с ID = {id}")
-
-    db_question = db.query(Question).filter(Question.id == id).first()
-    if not db_question:
-        logger.info(f"Вопрос с ID = {id} не найден при попытке удаления")
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Question not found"
-        )
-
-    # Удаление связанных с вопросом ответов должно гарантироваться
-    # установленными реляционными отношениями между таблицами
-    # TO-DO: продумать тесты и убедиться, что это точно работает
-    db.delete(db_question)
-    db.commit()
-
-    logger.info(f"Вопрос с ID = {id} и все связанные ответы успешно удалены")
-    return None
-
-
-@app.get("/questions/{id}/", response_model=QuestionWithAnswersResponse)
-def get_question_with_answers(
-    id: int,
-    db: Annotated[Session, Depends(get_db)]
-) -> QuestionWithAnswersResponse:
-    """
-    Получение вопроса по ID и всех связанных с ним ответов
-    """
-    logger.info(f"Запрос вопроса с ID = {id} и всех ответов")
-
-    db_question = db.query(Question).filter(Question.id == id).first()
-    if not db_question:
-        logger.info(f"Вопрос с ID = {id} не найден")
-        raise HTTPException(status_code=404, detail="Question not found")
-
-    return db_question
