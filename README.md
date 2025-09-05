@@ -13,6 +13,21 @@ cp .env.example .env
 ```bash
 nano .env
 ```
+## Запуск тестов
+> ⚠️ Во избежание конфликта баз данных выполняйте тесты до старта основного контейнера!
+> Файл тестового окружения .env.test уже существует в корневом каталоге репозитория
+* Выполните команду:
+```bash
+docker-compose --env-file .env.test run --rm -e PYTHONPATH=/opt/app app pytest tests/ -v
+```
+* Чтобы проверить покрытие кода тестами, выполните команду:
+```bash
+docker-compose --env-file .env.test run --rm -e PYTHONPATH=/opt/app app pytest tests/ --cov=src
+```
+* После завершения тестов удалите тестовые контейнеры и том с БД
+```bash
+docker-compose down -v
+```
 ## Запуск
 * Выполните команду:
 ```bash
@@ -29,18 +44,9 @@ docker-compose up -d
 ```bash
 docker-compose down
 ```
-* Для остановки с удалением файлов БД выполните:
+* Для остановки с удалением контейнера и тома БД выполните:
 ```bash
 docker-compose down -v
-```
-## Запуск тестов
-* Выполните команду:
-```bash
-docker-compose --env-file .env.test run --rm -e PYTHONPATH=/opt/app app pytest tests/ -v
-```
-* Чтобы проверить покрытие кода тестами, выполните команду:
-```bash
-docker-compose --env-file .env.test run --rm -e PYTHONPATH=/opt/app app pytest tests/ --cov=src
 ```
 ## Проверка стиля кода
 * Выполните команды:
