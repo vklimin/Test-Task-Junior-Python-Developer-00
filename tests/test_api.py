@@ -1,4 +1,7 @@
 # tests/test_api.py
+#
+# Сделать тесты помогли QWEN AI и Google
+#
 import pytest
 from fastapi import status
 from fastapi.testclient import TestClient
