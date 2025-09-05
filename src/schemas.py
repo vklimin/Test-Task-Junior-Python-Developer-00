@@ -23,6 +23,9 @@ class QuestionCreate(BaseModel):
     @field_validator("text")
     @classmethod
     def validate_text(cls: type[Self], v: str) -> str:
+        # TO-DO: при необходимости можно усилить валидацию текста
+        # с помощью регулярных выражений
+        # Например, можно избавляться от спаренных пробелов в тексте вопроса
         if not v or (v := v.strip()) == "":
             raise ValueError(
                 "Текст вопроса не может быть пустым или состоять только из пробелов"
@@ -87,5 +90,17 @@ class AnswerResponse(BaseModel):
     user_id: str
     text: str
     created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class QuestionWithAnswersResponse(BaseModel):
+    """
+    В HTTP-ответе возвращаем вопрос и все ответы на него
+    """
+    id: int
+    text: str
+    created_at: datetime
+    answers: list[AnswerResponse] = []
 
     model_config = ConfigDict(from_attributes=True)

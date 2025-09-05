@@ -7,7 +7,13 @@ from sqlalchemy.orm import Session
 
 from src.database import SessionLocal
 from src.models import Answer, Question
-from src.schemas import AnswerCreate, AnswerResponse, QuestionCreate, QuestionResponse
+from src.schemas import (
+    AnswerCreate,
+    AnswerResponse,
+    QuestionCreate,
+    QuestionResponse,
+    QuestionWithAnswersResponse,
+)
 
 # Настройка логирования
 logging.basicConfig(
@@ -19,6 +25,7 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
+
 
 # Инициализация FastAPI-приложения
 app = FastAPI(title="Тестовое задание: API-сервис для вопросов и ответов")
@@ -32,6 +39,8 @@ def get_db() -> Session:
     finally:
         db.close()
 
+
+# Обрабочики обращений
 @app.get("/")
 def read_root() -> dict:
     logger.info("Запрос корневого эндпоинта")
@@ -175,3 +184,21 @@ def delete_question(
 
     logger.info(f"Вопрос с ID = {id} и все связанные ответы успешно удалены")
     return None
+
+
+@app.get("/questions/{id}/", response_model=QuestionWithAnswersResponse)
+def get_question_with_answers(
+    id: int,
+    db: Annotated[Session, Depends(get_db)]
+) -> Question:
+    """
+    Получение вопроса по ID и всех связанных с ним ответов
+    """
+    logger.info(f"Запрос вопроса с ID = {id} и всех ответов")
+
+    db_question = db.query(Question).filter(Question.id == id).first()
+    if not db_question:
+        logger.info(f"Вопрос с ID = {id} не найден")
+        raise HTTPException(status_code=404, detail="Question not found")
+
+    return db_question
