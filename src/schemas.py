@@ -8,29 +8,35 @@ from typing import Self
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
-class QuestionCreate(BaseModel):
-    """
-    В HTTP-запросе ожидаем текст вопроса
-    """
-    text: str = Field(
-        ...,
-        description=(
-            "Текст вопроса (обязательный, "
-            "не может быть пустым или состоять только из пробелов)"
-        )
-    )
-
+class BaseTextModel(BaseModel):
     @field_validator("text")
     @classmethod
     def validate_text(cls: type[Self], v: str) -> str:
         # TO-DO: при необходимости можно усилить валидацию текста
         # с помощью регулярных выражений
         # Например, можно избавляться от спаренных пробелов в тексте вопроса
+        # Также можно дополнительно форматировать текст
+        # Например, делать первую букву предложения заглавной
         if not v or (v := v.strip()) == "":
             raise ValueError(
-                "Текст вопроса не может быть пустым или состоять только из пробелов"
+                "Текст не может быть пустым или состоять только из пробелов"
             )
         return v
+
+
+class QuestionCreate(BaseTextModel):
+    """
+    В HTTP-запросе ожидаем текст вопроса
+    """
+    text: str = Field(
+        ...,
+        # TO-DO: при необходимости можно ограничить максимальную длину текста
+        # с помощью параметра max_length
+        description=(
+            "Текст вопроса (обязательный, "
+            "не может быть пустым или состоять только из пробелов)"
+        )
+    )
 
 
 class QuestionResponse(BaseModel):
@@ -44,9 +50,10 @@ class QuestionResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class AnswerCreate(BaseModel):
+class AnswerCreate(BaseTextModel):
     user_id: str = Field(
         ...,
+        # TO-DO: ограничение длины идентификатора
         description=(
             "Идентификатор пользователя (обязательный, "
             "не может быть пустым или состоять только из пробелов)"
@@ -54,6 +61,7 @@ class AnswerCreate(BaseModel):
     )
     text: str = Field(
         ...,
+        # TO-DO: ограничение длины ответа
         description=(
             "Текст ответа (обязательный, "
             "не может быть пустым или состоять только из пробелов)"
@@ -64,19 +72,11 @@ class AnswerCreate(BaseModel):
     @field_validator("user_id")
     @classmethod
     def validate_user_id(cls: type[Self], v: str) -> str:
+        # TO-DO: контроль формата и допустимых символов идентификатора
         if not v or (v := v.strip()) == "":
             raise ValueError(
                 "Идентификатор пользователя не может быть "
                 "пустым или состоять только из пробелов"
-            )
-        return v
-
-    @field_validator("text")
-    @classmethod
-    def validate_text(cls: type[Self], v: str) -> str:
-        if not v or (v := v.strip()) == "":
-            raise ValueError(
-                "Текст ответа не может быть пустым или состоять только из пробелов"
             )
         return v
 
