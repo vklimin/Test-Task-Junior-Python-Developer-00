@@ -89,7 +89,7 @@ def create_answer(
     db_question = db.query(Question).filter(Question.id == id).first()
     if not db_question:
         logger.info(f"Не существует вопроса с ID = {id}")
-        raise HTTPException(status_code=404, detail=f"Question not found")
+        raise HTTPException(status_code=404, detail="Question not found")
 
     db_answer = Answer(
         question_id=id,
