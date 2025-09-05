@@ -36,11 +36,11 @@ docker-compose down -v
 ## Запуск тестов
 * Выполните команду:
 ```bash
-docker-compose run --rm -e PYTHONPATH=/opt/app app pytest tests/ -v
+docker-compose --env-file .env.test run --rm -e PYTHONPATH=/opt/app app pytest tests/ -v
 ```
 * Чтобы проверить покрытие кода тестами, выполните команду:
 ```bash
-docker-compose run --rm -e PYTHONPATH=/opt/app app pytest tests/ --cov=src
+docker-compose --env-file .env.test run --rm -e PYTHONPATH=/opt/app app pytest tests/ --cov=src
 ```
 ## Проверка стиля кода
 * Выполните команды:
