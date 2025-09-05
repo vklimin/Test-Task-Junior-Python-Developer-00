@@ -9,9 +9,9 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class BaseTextModel(BaseModel):
-    # TO-DO: если валидация текстов для вопросов и ответов будет различаться,
-    # уйти от использования общего класса и создать методы валидации в каждом
-    # классе свои
+class BaseTextModel(BaseModel):
+    # TO-DO: когда валидация текстов для вопросов и ответов станет различной,
+    # нужно будет перейти к использованию переопределённых методов в каждом классе
     text: str
 
     @field_validator("text")
