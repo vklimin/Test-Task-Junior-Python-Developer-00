@@ -46,8 +46,9 @@ def get_questions(
     Получение списка всех вопросов
     """
     logger.info("Запрос списка всех вопросов")
-    questions = db.query(Question).all()
-    return questions
+
+    db_questions = db.query(Question).all()
+    return db_questions
 
 
 @app.post("/questions/", response_model=QuestionResponse)
@@ -59,12 +60,14 @@ def create_question(
     Создание нового вопроса
     """
     logger.info(f"Создание вопроса: \"{question.text}\"")
+
     db_question = Question(
        text=question.text
     )
     db.add(db_question)
     db.commit()
     db.refresh(db_question)
+
     logger.info(f"Создан вопрос с ID = {db_question.id}")
     return db_question
 
@@ -82,10 +85,11 @@ def create_answer(
         f"Создание пользователем {answer.user_id} "
         "ответа \"{answer.text}\" к вопросу ID = {id}"
     )
-    question = db.query(Question).filter(Question.id == id).first()
-    if not question:
+
+    db_question = db.query(Question).filter(Question.id == id).first()
+    if not db_question:
         logger.info(f"Не существует вопроса с ID = {id}")
-        raise HTTPException(status_code=404, detail=f"Вопрос с ID = {id} не найден")
+        raise HTTPException(status_code=404, detail=f"Question not found")
 
     db_answer = Answer(
         question_id=id,
@@ -95,5 +99,26 @@ def create_answer(
     db.add(db_answer)
     db.commit()
     db.refresh(db_answer)
+
     logger.info(f"Создан ответ с ID = {db_answer.id}")
+    return db_answer
+
+
+@app.get("/answers/{id}/", response_model=AnswerResponse)
+def get_answer(
+    id: int,
+    db: Annotated[Session, Depends(get_db)]
+) -> AnswerResponse:
+    """
+    Получение конкретного ответа
+    """
+    logger.info(
+        f"Запрос ответа с ID = {id}"
+    )
+
+    db_answer = db.query(Answer).filter(Answer.id == id).first()
+    if not db_answer:
+        logger.info(f"Не существует ответа с ID = {id}")
+        raise HTTPException(status_code=404, detail="Answer not found")
+
     return db_answer
