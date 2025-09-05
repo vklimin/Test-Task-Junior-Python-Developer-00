@@ -5,7 +5,7 @@ from typing import Annotated
 from fastapi import Depends, FastAPI, HTTPException, status
 from sqlalchemy.orm import Session
 
-from src.database import SessionLocal
+from src.database import get_db
 from src.models import Answer, Question
 from src.schemas import (
     AnswerCreate,
@@ -29,15 +29,6 @@ logger = logging.getLogger(__name__)
 
 # Инициализация FastAPI-приложения
 app = FastAPI(title="Тестовое задание: API-сервис для вопросов и ответов")
-
-
-# Зависимость для сессии БД
-def get_db() -> Session:
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 # Обрабочики обращений
@@ -190,7 +181,7 @@ def delete_question(
 def get_question_with_answers(
     id: int,
     db: Annotated[Session, Depends(get_db)]
-) -> Question:
+) -> QuestionWithAnswersResponse:
     """
     Получение вопроса по ID и всех связанных с ним ответов
     """
