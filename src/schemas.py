@@ -9,6 +9,8 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class BaseTextModel(BaseModel):
+    text: str
+
     @field_validator("text")
     @classmethod
     def validate_text(cls: type[Self], v: str) -> str:
@@ -32,6 +34,7 @@ class QuestionCreate(BaseTextModel):
         ...,
         # TO-DO: при необходимости можно ограничить максимальную длину текста
         # с помощью параметра max_length
+        # TO-DO: добавить контроль минимальной длины вопроса
         description=(
             "Текст вопроса (обязательный, "
             "не может быть пустым или состоять только из пробелов)"
