@@ -9,7 +9,7 @@ import os
 
 from typing import Generator
 from sqlalchemy import create_engine
-from sqlalchemy.orm import DeclarativeMeta, Session, declarative_base, sessionmaker
+from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
