@@ -19,7 +19,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install ruff mypy pytest
+          pip install ruff mypy pytest fastapi sqlalchemy
 
       - name: Check code style locally
         run: |
