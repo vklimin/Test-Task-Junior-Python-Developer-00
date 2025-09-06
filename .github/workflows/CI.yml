@@ -23,4 +23,4 @@ jobs:
 
       - name: Check code style with ruff
         run: |
-          ruff check src/ --select ANN,B,C,E,F,I,W
+          ruff check src/
