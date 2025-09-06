@@ -21,7 +21,7 @@ jobs:
           pip install --upgrade pip
           pip install ruff mypy pytest
 
-      - name: Check code style with ruff
+      - name: Check code style locally
         run: |
           ruff check src/
           mypy src/
