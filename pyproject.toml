@@ -1,0 +1,5 @@
+# pyproject.toml
+[tool.mypy]
+mypy_path = ["src"]
+explicit_package_bases = true
+follow_imports = "skip"
