@@ -7,7 +7,7 @@
 """
 import os
 
-from typing import Generator, cast
+from typing import Generator
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeMeta, Session, declarative_base, sessionmaker
 
@@ -19,7 +19,7 @@ if not DATABASE_URL:
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = cast("type[DeclarativeMeta]", declarative_base())
+Base = declarative_base()
 
 
 # Зависимость для сессии БД
