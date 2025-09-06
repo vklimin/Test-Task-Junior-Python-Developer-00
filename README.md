@@ -49,7 +49,8 @@ docker-compose down
 docker-compose down -v
 ```
 ## Проверка стиля кода
-* Выполните команды:
+* Выполните команду:
 ```bash
-ruff check src/ --select ANN,B,C,E,F,I,W
+ruff check src/
 ```
+> Это тест производится автоматически с помощью CI при пуше репозитория
