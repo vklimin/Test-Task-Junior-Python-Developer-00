@@ -7,6 +7,7 @@
 """
 import os
 
+from typing import Generator
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
@@ -22,7 +23,7 @@ Base = declarative_base()
 
 
 # Зависимость для сессии БД
-def get_db() -> Session:
+def get_db() -> Generator[Session, None, None]:
     db = SessionLocal()
     try:
         yield db
