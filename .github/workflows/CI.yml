@@ -19,9 +19,13 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install ruff mypy pytest fastapi sqlalchemy
+          pip install ruff mypy fastapi sqlalchemy
 
       - name: Check code style locally
         run: |
           ruff check src/
           mypy src/
+
+      - name: Run tests
+        run: |
+          docker-compose --env-file .env.test run --rm -e PYTHONPATH=/opt/app app pytest tests/ -v
