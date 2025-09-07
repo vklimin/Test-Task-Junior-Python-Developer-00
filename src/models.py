@@ -1,4 +1,11 @@
 # src/models.py
+"""
+Модели базы данных для приложения управления вопросами и ответами.
+
+Содержит SQLAlchemy ORM-модели, описывающие основные сущности:
+- Question: представляет вопрос, заданный пользователем.
+- Answer: представляет ответ на вопрос, привязанный к конкретному вопросу.
+"""
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, func
 from sqlalchemy.orm import relationship
 
