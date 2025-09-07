@@ -13,21 +13,6 @@ cp .env.example .env
 ```bash
 nano .env
 ```
-## Запуск тестов
-> ⚠️ Во избежание конфликта баз данных выполняйте тесты до старта основного контейнера!\
-> Файл тестового окружения .env.test уже подготовлен в корневом каталоге репозитория
-* Выполните команду:
-```bash
-docker-compose --env-file .env.test run --rm -e PYTHONPATH=/opt/app app pytest tests/ -v
-```
-* Чтобы проверить покрытие кода тестами, выполните команду:
-```bash
-docker-compose --env-file .env.test run --rm -e PYTHONPATH=/opt/app app pytest tests/ --cov=src
-```
-* После завершения тестов удалите тестовые контейнеры и том с БД
-```bash
-docker-compose down -v
-```
 ## Запуск
 * Выполните команду:
 ```bash
@@ -49,9 +34,30 @@ docker-compose down
 docker-compose down -v
 ```
 ## Локальная проверка стиля кода
+* Предварительно установите пакеты для тестирования:
+```bash
+pip install --upgrade pip
+pip install ruff mypy fastapi sqlalchemy
+```
 * Выполните команды:
 ```bash
 ruff check src/
 mypy src/
+```
+> Это тест производится автоматически с помощью CI при пуше в репозиторий
+## Запуск тестов внутри контейнера
+> ⚠️ Во избежание конфликта баз данных выполняйте тесты до первого старта основного контейнера!\
+> Попытка тестировать код после запуска основного контейнера приведёт к конфликту основной и тестовой баз данных
+* Выполните команду:
+```bash
+docker-compose --env-file .env.example run --rm -e PYTHONPATH=/opt/app app pytest tests/ -v
+```
+* Чтобы проверить покрытие кода тестами, выполните команду:
+```bash
+docker-compose --env-file .env.example run --rm -e PYTHONPATH=/opt/app app pytest tests/ --cov=src
+```
+* После завершения тестов удалите тестовые контейнеры и том с БД
+```bash
+docker-compose down -v
 ```
 > Это тест производится автоматически с помощью CI при пуше в репозиторий
