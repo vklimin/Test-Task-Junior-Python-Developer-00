@@ -18,6 +18,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          apt install docker-compose
           pip install --upgrade pip
           pip install ruff mypy fastapi sqlalchemy
 
