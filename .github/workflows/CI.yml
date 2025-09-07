@@ -18,7 +18,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          apt install docker-compose
           pip install --upgrade pip
           pip install ruff mypy fastapi sqlalchemy
 
@@ -29,4 +28,4 @@ jobs:
 
       - name: Run tests
         run: |
-          docker-compose --env-file .env.test run --rm -e PYTHONPATH=/opt/app app pytest tests/ -v
+          docker compose --env-file .env.test run --rm -e PYTHONPATH=/opt/app app pytest tests/ -v
