@@ -147,7 +147,7 @@ docker-compose up
 * Остановите контейнер нажатием Ctrl+C
 
 ## Шаг 06. Добавление контейнера с приложением
-Для того, чтобы работать с базой данных, обычно добавляют контейнер с каким-либо приложением. Эти два независимых контейнера будут работать в паре. В рамках задания добавим программу на Python
+Для того, чтобы работать с базой данных, обычно добавляют контейнер с каким-либо приложением. Эти два независимых контейнера будут работать в тандеме. В рамках задания добавим программу на Python
 
 ### 01. Создание файла зависимостей
 * Перейдите в корень проекта и создайте файл requirements.txt:
@@ -181,7 +181,7 @@ import os
 
 from typing import Generator
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
@@ -189,8 +189,11 @@ if not DATABASE_URL:
        "DATABASE_URL не задана в переменных окружения"
     )
 
+# Описание параметров движка БД (адрес, логин, пароль)
 engine = create_engine(DATABASE_URL)
+# Соединение с БД (сессия)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+# Это будущий родитель всех таблиц проекта
 Base = declarative_base()
 
 # Зависимость для сессии БД
@@ -201,7 +204,7 @@ def get_db() -> Generator[Session, None, None]:
     finally:
         db.close()
 ```
-> Этот типовой базовый скрипт легко гуглится
+> Этот простейший базовый скрипт легко гуглится
 
 ### 04. Создание модели данных
 * Создайте модель данных:
