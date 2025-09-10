@@ -207,11 +207,12 @@ def get_db() -> Generator[Session, None, None]:
 > Этот простейший базовый скрипт легко гуглится
 
 ### 04. Создание модели данных
+> Модель данных описывает таблицы проекта: столбцы, индексы, реляционные отношения
+
 * Создайте модель данных:
 ```bash
 nano src/models.py
 ```
-с кодом
 ```python
 # src/models.py
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, func
@@ -351,9 +352,10 @@ docker-compose down
 docker-compose run --rm app alembic init alembic
 ```
 * Остановите контейнер
+> В корне проекта появится папка alembic и файл alembic.ini
 
 ### 02. Корректировка скриптов миграции под нашу задачу
-* Откройте ./alembic/env.py и добавьте в начало:
+* Откройте скрипт alembic/env.py и добавьте в начало:
 ```python
 import sys
 import os
@@ -361,6 +363,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../src'))
 ```
+> Это позволит окружению Alembic видеть папку проекта src
 * Замените переменную target_metadata и ниже добавьте чтение переменной окружения DATABASE_URL:
 ```python
 from src.models import Base
@@ -369,6 +372,7 @@ target_metadata = Base.metadata
 database_url = os.getenv("DATABASE_URL")
 config.set_main_option("sqlalchemy.url", database_url)
 ```
+> Это подскажет Alembic откуда брать путь к нашей БД и познакомит с таблицами нашего проекта
 
 ### 03. Создание миграции
 * Выполните команду в корне проекта
