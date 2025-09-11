@@ -380,8 +380,8 @@ config.set_main_option("sqlalchemy.url", database_url)
 docker-compose run --rm app alembic revision --autogenerate -m "initial"
 ```
 
-### 04. Автоматическое применение миграций
-* Чтобы в будущем при запуске новых коннтейнеров все сохранённые миграции автоматически применялись к базе данных доработайте команду в docker-compose.yml:
+### 04. Автоматическое использование миграций
+* Чтобы в будущем при запуске новых контейнеров все сохранённые миграции автоматически применялись к базе данных доработайте команду в docker-compose.yml:
 ```yaml
 # ...
 command: sh -c "alembic upgrade head && uvicorn src.main:app --host 0.0.0.0 --port 8000"
@@ -395,11 +395,10 @@ command: sh -c "alembic upgrade head && uvicorn src.main:app --host 0.0.0.0 --po
 pydantic
 ```
 ### 02. Подготовка файл для Pydantic-схем 
-* Создайте файл:
+* Создайте файл схем:
 ```bash
 nano src/schemas.py
 ```
-с содержимым:
 ```python
 # src/schemas.py
 """
@@ -428,7 +427,6 @@ mkdir tests
 ```bash
 nano tests/test_api.py
 ```
-с содержимым:
 ```python
 # tests/test_api.py
 import pytest
@@ -447,7 +445,11 @@ def test_read_root() -> None:
     assert response.json() == {"message": "Hello, world!"}
 ```
 
-### ??? Вызов теста?
+### 04. Проведение тестов
+```bash
+docker-compose run --rm -e PYTHONPATH=/opt/app app pytest tests/
+```
+> Важно. Проводить тесты необходимо до первого рабочего запуска контейнера. Иначе возникнет конфликт тестовой и рабочей баз данных
 
 ## Шаг 11. Настройка логирования Logging
 
