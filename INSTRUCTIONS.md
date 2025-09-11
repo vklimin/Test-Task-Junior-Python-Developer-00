@@ -545,9 +545,6 @@ def create_question(
     question: QuestionCreate, 
     db: Annotated[Session, Depends(get_db)]
 ) -> QuestionResponse:
-    """
-    Создание нового вопроса
-    """
     db_question = Question(text=question.text)
     db.add(db_question)
     db.commit()
@@ -665,10 +662,7 @@ def create_answer(
     answer: AnswerCreate,
     db: Annotated[Session, Depends(get_db)]
 ) -> AnswerResponse:
-    logger.info(
-        f"Создание пользователем {answer.user_id} "
-        "ответа \"{answer.text}\" к вопросу ID = {id}"
-    )
+    logger.info(f"Создание пользователем {answer.user_id} ответа \"{answer.text}\" к вопросу ID = {id}")
 
     db_question = db.query(Question).filter(Question.id == id).first()
     if not db_question:
@@ -729,9 +723,7 @@ def get_answer(
     id: int,
     db: Annotated[Session, Depends(get_db)]
 ) -> AnswerResponse:
-    logger.info(
-        f"Запрос ответа с ID = {id}"
-    )
+    logger.info(f"Запрос ответа с ID = {id}")
 
     db_answer = db.query(Answer).filter(Answer.id == id).first()
     if not db_answer:
