@@ -8,14 +8,23 @@
 import os
 
 from typing import Generator
+from urllib.parse import quote_plus
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
-DATABASE_URL = os.getenv("DATABASE_URL")
-if not DATABASE_URL:
+DB_HOST = os.getenv("POSTGRES_HOST")
+DB_PORT = os.getenv("POSTGRES_PORT")
+DB_USER = os.getenv("POSTGRES_USER")
+DB_PASS = os.getenv("POSTGRES_PASSWORD")
+DB_NAME = os.getenv("POSTGRES_DB")
+
+if not all([DB_HOST, DB_PORT, DB_USER, DB_PASS, DB_NAME]):
     raise ValueError(
-       "DATABASE_URL не задана в переменных окружения"
+       "Отсутствуют переменные окружения с информацией для подключения к базе данных"
     )
+
+DB_PASS = quote_plus(DB_PASS or "")
+DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
