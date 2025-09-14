@@ -24,11 +24,25 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
+from urllib.parse import quote_plus
 from src.models import Base
 target_metadata = Base.metadata
 
-database_url = os.getenv("DATABASE_URL")
-config.set_main_option("sqlalchemy.url", database_url)
+DB_HOST = os.getenv("POSTGRES_HOST")
+DB_PORT = os.getenv("POSTGRES_PORT")
+DB_USER = os.getenv("POSTGRES_USER")
+DB_PASS = os.getenv("POSTGRES_PASSWORD")
+DB_NAME = os.getenv("POSTGRES_DB")
+
+if not all([DB_HOST, DB_PORT, DB_USER, DB_PASS, DB_NAME]):
+    raise ValueError(
+       "Отсутствуют переменные окружения с информацией для подключения к базе данных"
+    )
+
+DB_PASS = quote_plus(DB_PASS or "")
+DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+
+config.set_main_option("sqlalchemy.url", DATABASE_URL)
 
 
 # other values from the config, defined by the needs of env.py,
