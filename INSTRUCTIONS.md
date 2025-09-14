@@ -182,14 +182,23 @@ nano src/database.py
 import os
 
 from typing import Generator
+from urllib.parse import quote_plus
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
-DATABASE_URL = os.getenv("DATABASE_URL")
-if not DATABASE_URL:
+DB_HOST = os.getenv("POSTGRES_HOST")
+DB_PORT = os.getenv("POSTGRES_PORT")
+DB_USER = os.getenv("POSTGRES_USER")
+DB_PASS = os.getenv("POSTGRES_PASSWORD")
+DB_NAME = os.getenv("POSTGRES_DB")
+
+if not all([DB_HOST, DB_PORT, DB_USER, DB_PASS, DB_NAME]):
     raise ValueError(
-       "DATABASE_URL не задана в переменных окружения"
+       "Отсутствуют переменные окружения с информацией для подключения к базе данных"
     )
+
+DB_PASS = quote_plus(DB_PASS or "")
+DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 # Описание параметров движка БД (адрес, логин, пароль)
 engine = create_engine(DATABASE_URL)
@@ -310,9 +319,13 @@ services:
       db:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - ./src:/opt/app/src
+      - ./:/opt/app/
     ports:
       - "8000:8000"
     command: sh -c "uvicorn src.main:app --host 0.0.0.0 --port 8000"
@@ -383,7 +396,7 @@ docker-compose run --rm app alembic revision --autogenerate -m "initial"
 ```
 
 ### 04. Автоматическое использование миграций
-* Чтобы в будущем при запуске новых контейнеров все сохранённые миграции автоматически применялись к базе данных доработайте команду в docker-compose.yml:
+* Чтобы в будущем при запуске новых контейнеров все сохранённые миграции автоматически применялись к базе данных обновите команду в docker-compose.yml:
 ```yaml
 # ...
 command: sh -c "alembic upgrade head && uvicorn src.main:app --host 0.0.0.0 --port 8000"
@@ -883,7 +896,24 @@ def test_delete_answer() -> None:
 ```
 
 ### 06. Эндпоинт GET /questions/{id}/ — получение вопроса и всех его ответов
-* В основном модуле src/main.py создайте код:
+* В схемах создайте класс:
+```python
+class QuestionWithAnswersResponse(BaseModel):
+    """
+    В HTTP-ответе возвращаем вопрос и все ответы на него
+    """
+    id: int
+    text: str
+    created_at: datetime
+    answers: list[AnswerResponse] = []
+
+    model_config = ConfigDict(from_attributes=True)
+```
+* В основном модуле src/main.py импортируйте новую схему:
+```python
+from src.schemas import QuestionWithAnswersResponse
+```
+* и создайте код:
 ```python
 @app.get("/questions/{id}/", response_model=QuestionWithAnswersResponse)
 def get_question_with_answers(
