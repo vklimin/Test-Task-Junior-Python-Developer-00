@@ -14,6 +14,7 @@
 - [Шаг 12. Автоматизация тестирования с помощью CI/CD](#шаг-12-автоматизация-тестирования-с-помощью-cicd)
 - [Шаг 13. Настройка логирования Logging](#шаг-13-настройка-логирования-logging)
 - [Шаг 14. Создание эндпоинтов API](#шаг-14-создание-эндпоинтов-api)
+- [Итоговая оценка задания](#итоговая-оценка-задания)
 
 ## Шаг 01. Создание SSH-ключа безопасности
 > ⚠️ Пропустите этот шаг, если ключ уже существует в папке ~/.ssh
@@ -431,7 +432,7 @@ pip install ruff
 ```
 * Для запуска теста в корне проекта выполните команду:
 ```bash
-ruff src/
+ruff check src/
 ```
 
 ### 02. MyPy - инструмент для контроля типов
@@ -1011,3 +1012,29 @@ def test_delete_question() -> None:
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
 ```
+
+## Итоговая оценка задания
+
+### 🛠️ Стек технологий
+
+| Уровень → Специализация | Технологии |
+|-------------------------|-----------|
+| Trainee → DevOps & Security | SSH |
+| Junior+ → DevOps & Infrastructure | Docker |
+| pre-Middle → DevOps & Infrastructure | Docker Compose |
+| Junior → DevOps & CI/CD | GitHub Actions (CI/CD) |
+| Junior → Version Control | Git, GitHub |
+| Trainee → Python Backend Development | Uvicorn |
+| Junior+ → Python Backend Development | Python, FastAPI, Pydantic |
+| Junior++ → Python Backend Development | SQLAlchemy |
+| Junior → Database Engineering | SQL |
+| Junior+ → Database Engineering | Alembic, PostgreSQL |
+| Junior → Software Testing | pytest |
+| Trainee → Code Quality & Maintenance | Ruff |
+| Junior → Code Quality & Maintenance | mypy |
+| Junior → Observability & Monitoring | Python logging |
+
+---
+
+### 💡 Итоговый уровень разработчика по данному проекту:
+> **Junior+ → pre-Middle**
