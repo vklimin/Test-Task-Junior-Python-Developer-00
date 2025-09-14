@@ -381,9 +381,9 @@ curl http://localhost:8000
 ```
 http://localhost:8000/docs
 ```
-* Остановите контейнер с удалением БД
+* Остановите контейнер
 ```
-docker-compose down -v
+docker-compose down
 ```
 
 ---
@@ -547,12 +547,6 @@ def test_read_root() -> None:
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == {"message": "Hello, world!"}
 ```
-
-### 04. Запуск тестов ручном режиме
-```bash
-docker-compose run --rm -e PYTHONPATH=/opt/app app pytest tests/
-```
-> Важно. Проводить тесты необходимо до первого рабочего запуска контейнера. Иначе возникнет конфликт тестовой и рабочей баз данных
 
 ---
 
