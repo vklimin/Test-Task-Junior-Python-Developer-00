@@ -1068,3 +1068,22 @@ def test_delete_question() -> None:
 ```
 
 ---
+
+## Шаг. 15. Сохранение проекта в репозиторий
+
+### 01. Сохранение изменение в удалённый репозиторий
+```bash
+git add -A
+git commit -m "Последний push"
+git push
+```
+### 02. Перенос проекта в ветку main
+```bash
+git checkout main
+git pull
+git merge develop
+git commit
+git push origin main
+```
+
+---
