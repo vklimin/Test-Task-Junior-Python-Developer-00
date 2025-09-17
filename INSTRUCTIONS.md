@@ -1083,7 +1083,6 @@ git push
 git checkout main
 git pull
 git merge develop
-git commit
 git push origin main
 ```
 
